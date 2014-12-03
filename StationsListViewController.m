@@ -8,6 +8,7 @@
 
 #import "StationsListViewController.h"
 #import "DivvyBikeStation.h"
+#import "MapViewController.h"
 
 @interface StationsListViewController () <UITabBarDelegate, UITableViewDataSource>
 
@@ -91,6 +92,17 @@
         
         [self.stationsArray addObject:bike];
 
+    }
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(UITableViewCell *)cell{
+    if([segue.identifier isEqualToString:@"ToMapSegue"]){
+        MapViewController *mapView = segue.destinationViewController;
+        /*
+        detailViewController.city = [self.cities objectAtIndex:[self.tableView indexPathForCell:cell].row];
+        detailViewController.cityURLRequest = self.cityURLRequest;
+        */
+        mapView.divvyBikesSt = [self.stationsArray objectAtIndex:[self.tableView indexPathForCell:cell].row];
     }
 }
 

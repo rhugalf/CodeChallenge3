@@ -11,7 +11,8 @@
 @interface DivvyBikeStation : NSObject
 @property NSString *name;
 @property NSString *availableBikes;
-
+@property NSString *latitude;
+@property NSString *longitude;
 
 -(instancetype)initWithDictionary:(NSDictionary *)dictionary;
 @end

@@ -16,6 +16,8 @@
     if(self){
         self.name = [dictionary objectForKey:@"stAddress1"];
         self.availableBikes = [dictionary objectForKey:@"availableBikes"];
+        self.latitude = [dictionary objectForKey:@"latitude"];
+        self.longitude = [dictionary objectForKey:@"longitude"];
     }
     
     return self;
