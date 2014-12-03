@@ -10,7 +10,7 @@
 #import "DivvyBikeStation.h"
 #import "MapViewController.h"
 
-@interface StationsListViewController () <UITabBarDelegate, UITableViewDataSource>
+@interface StationsListViewController () <UITabBarDelegate, UITableViewDataSource,UISearchBarDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
@@ -24,10 +24,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self loadDataTextString];
+    [self loadDataTextString:@""];
+    
+    self.searchBar.delegate = self;
     
 }
 
+-(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+
+    [self loadDataTextString:self.searchBar.text];
+    
+    self.searchBar.text=@"";
+}
 
 #pragma mark - UITableView
 
@@ -51,10 +59,10 @@
 }
 
 
--(void)loadDataTextString{
+-(void)loadDataTextString:(NSString *) param{
     self.bikeStationArray = [[NSMutableArray alloc] init];
     
-    NSString *urlString = [NSString stringWithFormat:@"http://www.divvybikes.com/stations/json/"];
+    NSString *urlString = [NSString stringWithFormat:@"http://www.divvybikes.com/stations/json"];
     
     NSURL *url = [NSURL URLWithString:urlString];
     
@@ -70,7 +78,7 @@
         
         self.bikeStationArray =[NSArray arrayWithArray:[aux objectForKey:@"stationBeanList"]];
         
-        [self createStationsList];
+        [self createStationsList:param];
         
         [self.tableView reloadData];
         
@@ -79,29 +87,27 @@
     }];
 }
 
--(void)createStationsList{
+-(void)createStationsList:(NSString *) param{
     
     self.stationsArray = [[NSMutableArray alloc]init];
     
     for (NSDictionary *dic in self.bikeStationArray ) {
         
-        //busStopAnnotation = [[MKPointAnnotation alloc] init];
-        
         DivvyBikeStation *bike = [[DivvyBikeStation alloc]initWithDictionary:dic];
         
-        
-        [self.stationsArray addObject:bike];
-
+        if([param isEqualToString:@""])
+        {
+            [self.stationsArray addObject:bike];
+        }else if([bike.name containsString:param]){
+            [self.stationsArray addObject:bike];
+        }
     }
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(UITableViewCell *)cell{
     if([segue.identifier isEqualToString:@"ToMapSegue"]){
         MapViewController *mapView = segue.destinationViewController;
-        /*
-        detailViewController.city = [self.cities objectAtIndex:[self.tableView indexPathForCell:cell].row];
-        detailViewController.cityURLRequest = self.cityURLRequest;
-        */
+        
         mapView.divvyBikesSt = [self.stationsArray objectAtIndex:[self.tableView indexPathForCell:cell].row];
     }
 }
